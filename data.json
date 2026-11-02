@@ -1,9 +1,18 @@
 {
-    "projects": [
-        "Мой проект"
-    ],
-    "sessions": [],
-    "current": null,
-    "window": null,
-    "updated": "2026-11-02T18:08:23.264Z"
+    "projects":  [
+                     "Мой проект",
+                     "Mirelle"
+                 ],
+    "sessions":  [
+
+                 ],
+    "current":  {
+                    "project":  "Mirelle",
+                    "start":  "2026-11-02T19:14:57.9832381+01:00"
+                },
+    "window":  {
+                   "x":  2244,
+                   "y":  1259
+               },
+    "updated":  "2026-11-02T19:22:55.8293983+01:00"
 }

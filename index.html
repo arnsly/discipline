@@ -8,173 +8,214 @@
 <style>
   :root {
     color-scheme: light;
-    --surface-0:      #f4f4f2;
-    --surface-1:      #fcfcfb;
-    --border:         #e3e2de;
-    --text-primary:   #0b0b0b;
-    --text-secondary: #52514e;
-    --text-muted:     #8a8980;
-    --grid:           #ebeae6;
+    --bg:             #faf9f7;
+    --text-primary:   #15140f;
+    --text-secondary: #55534c;
+    --text-muted:     #93918a;
+    --hair:           #e6e4de;
+    --grid:           #eceae4;
     --series-1:       #2a78d6;
+    --good:           #0ca30c;
     --c1: #2a78d6; --c2: #eb6834; --c3: #1baf7a; --c4: #eda100;
     --c5: #e87ba4; --c6: #008300; --c7: #6250d6; --c8: #e34948;
-    --good:           #0ca30c;
+    /* тепловая шкала календаря: пусто → максимум */
+    --h0: #efedE7; --h0i: #a09e96;
+    --h1: #cde2fb; --h1i: #15140f;
+    --h2: #9ec5f4; --h2i: #15140f;
+    --h3: #5598e7; --h3i: #fcfcfb;
+    --h4: #2a78d6; --h4i: #fcfcfb;
+    --h5: #184f95; --h5i: #fcfcfb;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       color-scheme: dark;
-      --surface-0:      #111110;
-      --surface-1:      #1a1a19;
-      --border:         #2f2f2c;
-      --text-primary:   #f0efec;
-      --text-secondary: #c3c2b7;
-      --text-muted:     #8d8c84;
-      --grid:           #2a2a27;
+      --bg:             #0f0f0e;
+      --text-primary:   #f2f1ed;
+      --text-secondary: #b9b7ae;
+      --text-muted:     #7d7b74;
+      --hair:           #262522;
+      --grid:           #232320;
       --series-1:       #3987e5;
       --c1: #3987e5; --c2: #d95926; --c3: #199e70; --c4: #c98500;
       --c5: #d55181; --c6: #008300; --c7: #9085e9; --c8: #e66767;
+      --h0: #1d1d1a; --h0i: #6b6963;
+      --h1: #104281; --h1i: #cde2fb;
+      --h2: #1c5cab; --h2i: #e8f1fd;
+      --h3: #2a78d6; --h3i: #ffffff;
+      --h4: #5598e7; --h4i: #0b0b0b;
+      --h5: #9ec5f4; --h5i: #0b0b0b;
     }
   }
   :root[data-theme="dark"] {
     color-scheme: dark;
-    --surface-0:      #111110;
-    --surface-1:      #1a1a19;
-    --border:         #2f2f2c;
-    --text-primary:   #f0efec;
-    --text-secondary: #c3c2b7;
-    --text-muted:     #8d8c84;
-    --grid:           #2a2a27;
+    --bg:             #0f0f0e;
+    --text-primary:   #f2f1ed;
+    --text-secondary: #b9b7ae;
+    --text-muted:     #7d7b74;
+    --hair:           #262522;
+    --grid:           #232320;
     --series-1:       #3987e5;
     --c1: #3987e5; --c2: #d95926; --c3: #199e70; --c4: #c98500;
     --c5: #d55181; --c6: #008300; --c7: #9085e9; --c8: #e66767;
+    --h0: #1d1d1a; --h0i: #6b6963;
+    --h1: #104281; --h1i: #cde2fb;
+    --h2: #1c5cab; --h2i: #e8f1fd;
+    --h3: #2a78d6; --h3i: #ffffff;
+    --h4: #5598e7; --h4i: #0b0b0b;
+    --h5: #9ec5f4; --h5i: #0b0b0b;
   }
 
   * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
   body {
     margin: 0;
-    background: var(--surface-0);
+    background: var(--bg);
     color: var(--text-primary);
-    font: 15px/1.5 -apple-system, "Segoe UI", Roboto, Inter, system-ui, sans-serif;
+    font: 15px/1.55 -apple-system, "Segoe UI", Roboto, Inter, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 920px; margin: 0 auto; padding: 32px 16px 64px; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 56px 24px 96px; }
+  @media (max-width: 560px) { .wrap { padding: 32px 16px 64px; } }
 
-  header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin-bottom: 24px; }
-  h1 { font-size: 22px; font-weight: 650; letter-spacing: -0.01em; margin: 0; }
-  .meta { font-size: 13px; color: var(--text-muted); }
+  /* ---------- шапка ---------- */
+  header { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 44px; }
+  h1 {
+    font-size: 17px; font-weight: 500; margin: 0;
+    letter-spacing: .005em; color: var(--text-primary);
+  }
+  .upd { font-size: 12.5px; color: var(--text-muted); }
   .live {
-    display: inline-flex; align-items: center; gap: 6px;
-    font-size: 13px; color: var(--good); font-variant-numeric: tabular-nums;
+    margin-left: auto; display: inline-flex; align-items: center; gap: 7px;
+    font-size: 12.5px; color: var(--good); font-variant-numeric: tabular-nums;
   }
   .live[hidden] { display: none; }
-  .live .dot {
-    width: 7px; height: 7px; border-radius: 50%; background: var(--good);
-    animation: pulse 1.8s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
+  .live .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--good); animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .3 } }
 
-  .card {
-    background: var(--surface-1);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px;
-    margin-bottom: 16px;
-  }
-  .card h2 {
-    font-size: 13px; font-weight: 600; text-transform: uppercase;
-    letter-spacing: .06em; color: var(--text-secondary);
-    margin: 0 0 18px;
-  }
-
-  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
-  @media (max-width: 620px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
-  .tile {
-    background: var(--surface-1); border: 1px solid var(--border);
-    border-radius: 14px; padding: 16px 18px;
-  }
-  .tile .k { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
-  .tile .v {
-    font-size: 26px; font-weight: 600; letter-spacing: -0.02em;
+  /* ---------- крупные числа ---------- */
+  .stats { display: flex; flex-wrap: wrap; gap: 44px 56px; margin-bottom: 64px; }
+  .stat .v {
+    font-size: 34px; font-weight: 500; letter-spacing: -0.025em; line-height: 1.1;
     font-variant-numeric: tabular-nums;
   }
-  .tile .s { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+  .stat .k { font-size: 12.5px; color: var(--text-muted); margin-top: 7px; }
+  @media (max-width: 560px) { .stats { gap: 28px 40px; } .stat .v { font-size: 27px; } }
 
-  /* --- столбцы по дням --- */
-  .plot { position: relative; height: 180px; padding-left: 34px; }
-  .gridlines { position: absolute; inset: 0 0 0 34px; pointer-events: none; }
-  .gridlines div {
-    position: absolute; left: 0; right: 0; border-top: 1px solid var(--grid);
-    font-size: 11px; color: var(--text-muted);
+  /* ---------- секции ---------- */
+  section { margin-bottom: 64px; }
+  .shead { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+  h2 {
+    font-size: 12.5px; font-weight: 500; margin: 0;
+    color: var(--text-muted); letter-spacing: .07em; text-transform: uppercase;
   }
+  .shead .right { margin-left: auto; font-size: 12.5px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+
+  /* ---------- календарь ---------- */
+  .navbtn {
+    appearance: none; background: none; border: 0; cursor: pointer;
+    color: var(--text-muted); font-size: 16px; line-height: 1;
+    padding: 4px 7px; border-radius: 6px;
+  }
+  .navbtn:hover { color: var(--text-primary); background: var(--grid); }
+  .month { font-size: 13px; color: var(--text-secondary); min-width: 108px; text-align: center; }
+  .dow, .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; max-width: 408px; }
+  .dow div { font-size: 11px; color: var(--text-muted); text-align: center; padding-bottom: 7px; }
+  .cal .cell {
+    aspect-ratio: 1 / 1; border-radius: 7px; background: var(--h0); color: var(--h0i);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12.5px; font-variant-numeric: tabular-nums;
+    cursor: default; transition: transform .08s, outline-color .12s;
+    outline: 2px solid transparent; outline-offset: 2px;
+  }
+  .cal .cell.has { cursor: pointer; }
+  .cal .cell.lv1 { background: var(--h1); color: var(--h1i); }
+  .cal .cell.lv2 { background: var(--h2); color: var(--h2i); }
+  .cal .cell.lv3 { background: var(--h3); color: var(--h3i); }
+  .cal .cell.lv4 { background: var(--h4); color: var(--h4i); }
+  .cal .cell.lv5 { background: var(--h5); color: var(--h5i); }
+  .cal .cell.blank { background: none; }
+  .cal .cell.future { opacity: .4; }
+  .cal .cell.today { outline-color: var(--text-muted); }
+  .cal .cell.sel   { outline-color: var(--series-1); }
+  .cal .cell.has:hover { transform: scale(1.06); }
+  .legend { display: flex; align-items: center; gap: 6px; margin-top: 16px; font-size: 11.5px; color: var(--text-muted); max-width: 408px; }
+  .legend i { width: 13px; height: 13px; border-radius: 4px; display: block; }
+
+  /* ---------- столбцы ---------- */
+  .plot { position: relative; padding-left: 32px; }
+  .plot.tall { height: 150px; }
+  .plot.short { height: 76px; }
+  .gridlines { position: absolute; inset: 0 0 0 32px; pointer-events: none; }
+  .gridlines div { position: absolute; left: 0; right: 0; border-top: 1px solid var(--grid); font-size: 10.5px; color: var(--text-muted); }
   .gridlines div span { position: absolute; right: 100%; top: -8px; padding-right: 8px; white-space: nowrap; }
-  .bars { position: absolute; inset: 0 0 0 34px; display: flex; align-items: flex-end; gap: 2px; }
-  .bar { flex: 1; position: relative; height: 100%; display: flex; align-items: flex-end; cursor: default; }
-  .bar i {
-    display: block; width: 100%; background: var(--series-1);
-    border-radius: 4px 4px 0 0; min-height: 0;
-    transition: opacity .12s;
-  }
+  .bars { position: absolute; inset: 0 0 0 32px; display: flex; align-items: flex-end; gap: 3px; }
+  .bar { flex: 1; height: 100%; display: flex; align-items: flex-end; }
+  .bar i { display: block; width: 100%; background: var(--series-1); border-radius: 3px 3px 0 0; transition: opacity .12s; }
   .bar.zero i { background: var(--grid); border-radius: 2px; height: 2px !important; }
-  .bar:hover i { opacity: .72; }
-  .xlabels { display: flex; gap: 2px; margin-top: 8px; padding-left: 34px; }
-  .xlabels div {
-    flex: 1; text-align: center; font-size: 10px; color: var(--text-muted);
-    white-space: nowrap; overflow: hidden;
+  .bar:hover i { opacity: .7; }
+  .xlabels { display: flex; gap: 3px; margin-top: 9px; padding-left: 32px; }
+  .xlabels div { flex: 1; text-align: center; font-size: 10px; color: var(--text-muted); overflow: hidden; white-space: nowrap; }
+
+  /* ---------- проекты ---------- */
+  .prow { display: grid; gap: 6px; margin-bottom: 15px; }
+  .prow:last-child { margin-bottom: 0; }
+  .ptop { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 14px; }
+  .pname { display: flex; align-items: center; gap: 9px; min-width: 0; }
+  .pname span.nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .swatch { width: 9px; height: 9px; border-radius: 3px; flex: none; }
+  .pval { color: var(--text-muted); font-variant-numeric: tabular-nums; white-space: nowrap; font-size: 13px; }
+  .ptrack { height: 5px; background: var(--grid); border-radius: 3px; overflow: hidden; }
+  .ptrack i { display: block; height: 100%; border-radius: 3px; }
+
+  /* ---------- записи ---------- */
+  .daygroup { margin-bottom: 30px; }
+  .dayhead {
+    display: flex; align-items: baseline; gap: 10px;
+    padding-bottom: 9px; margin-bottom: 4px; border-bottom: 1px solid var(--hair);
   }
+  .dayhead b { font-size: 13.5px; font-weight: 500; }
+  .dayhead span { font-size: 12.5px; color: var(--text-muted); margin-left: auto; font-variant-numeric: tabular-nums; }
+  .rec { display: flex; align-items: baseline; gap: 12px; padding: 9px 0; }
+  .rec .tm { font-size: 12.5px; color: var(--text-muted); font-variant-numeric: tabular-nums; white-space: nowrap; min-width: 86px; }
+  .rec .mid { flex: 1; min-width: 0; }
+  .rec .pj { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+  .rec .note { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+  .rec .du { font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--text-secondary); }
+  .filterbar { font-size: 12.5px; color: var(--text-muted); margin-bottom: 18px; }
+  .filterbar button {
+    appearance: none; border: 0; background: var(--grid); color: var(--text-secondary);
+    font: inherit; padding: 3px 9px; border-radius: 99px; cursor: pointer; margin-left: 8px;
+  }
+  .filterbar button:hover { color: var(--text-primary); }
+  .more {
+    appearance: none; border: 0; background: none; color: var(--text-muted);
+    font: inherit; font-size: 13px; cursor: pointer; padding: 6px 0;
+  }
+  .more:hover { color: var(--text-primary); }
 
-  /* --- проекты --- */
-  .proj { display: flex; flex-direction: column; gap: 12px; }
-  .prow { display: grid; grid-template-columns: 1fr; gap: 5px; }
-  .ptop { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 14px; }
-  .pname { display: flex; align-items: center; gap: 8px; min-width: 0; }
-  .pname b { font-weight: 550; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .swatch { width: 10px; height: 10px; border-radius: 3px; flex: none; }
-  .pval { color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .ptrack { height: 8px; background: var(--grid); border-radius: 4px; overflow: hidden; }
-  .ptrack i { display: block; height: 100%; border-radius: 4px; }
-
-  /* --- таблица --- */
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--border); }
-  th { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; }
-  td:last-child, th:last-child { text-align: right; font-variant-numeric: tabular-nums; }
-  tr:last-child td { border-bottom: 0; }
-  .tproj { display: inline-flex; align-items: center; gap: 8px; }
-  .tscroll { overflow-x: auto; }
-
-  /* --- подсказка --- */
+  /* ---------- прочее ---------- */
   #tip {
-    position: fixed; z-index: 10; pointer-events: none; opacity: 0;
-    transition: opacity .1s;
-    background: var(--text-primary); color: var(--surface-1);
-    font-size: 12px; line-height: 1.4; padding: 7px 10px; border-radius: 8px;
-    white-space: nowrap; box-shadow: 0 4px 16px rgba(0,0,0,.18);
+    position: fixed; z-index: 10; pointer-events: none; opacity: 0; transition: opacity .1s;
+    background: var(--text-primary); color: var(--bg);
+    font-size: 12px; line-height: 1.45; padding: 7px 10px; border-radius: 7px;
+    white-space: nowrap; box-shadow: 0 6px 20px rgba(0,0,0,.16);
   }
   #tip b { font-weight: 600; }
-
-  .empty { color: var(--text-secondary); font-size: 14px; }
-  .empty code {
-    background: var(--surface-0); border: 1px solid var(--border);
-    padding: 2px 6px; border-radius: 5px; font-size: 13px;
-  }
-  details summary {
-    cursor: pointer; font-size: 13px; color: var(--text-secondary);
-    margin-bottom: 12px;
-  }
+  .empty { color: var(--text-secondary); font-size: 14.5px; max-width: 46ch; }
+  .empty code { color: var(--text-primary); font-size: 13px; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>Время по проектам</h1>
-    <span class="meta" id="updated"></span>
+    <span class="upd" id="updated"></span>
     <span class="live" id="live" hidden><span class="dot"></span><span id="liveText"></span></span>
   </header>
   <div id="app"></div>
 </div>
 <div id="tip"></div>
 
-<!-- локальный режим: файл рядом. На сайте данные берутся через fetch. -->
 <script src="data.js" onerror="window.__ttNoLocal = true"></script>
 <script>
 (function () {
@@ -186,8 +227,18 @@
   var updEl   = document.getElementById('updated');
   var ONLINE  = location.protocol === 'http:' || location.protocol === 'https:';
 
-  var running = null;   // идущая сессия, обновляется при каждом рендере
+  var MONTHS = ['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+  var DOW    = ['пн','вт','ср','чт','пт','сб','вс'];
 
+  var state = {
+    data: null,
+    monthOffset: 0,   // 0 = текущий месяц
+    selDay: null,     // выбранный день в календаре (ключ)
+    expanded: false   // показать все записи
+  };
+  var running = null;
+
+  // ---------- мелкие помощники ----------
   function arr(x) { return Array.isArray(x) ? x : (x ? [x] : []); }
   function esc(s) {
     return String(s).replace(/[&<>"]/g, function (c) {
@@ -215,42 +266,60 @@
     var h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = Math.floor(sec % 60);
     return [h, m, s].map(function (n) { return String(n).padStart(2, '0'); }).join(':');
   }
-  function clock(d) {
-    return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
-  }
+  function clock(d) { return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
   function runSec() { return running ? Math.max(0, Math.floor((Date.now() - running.start) / 1000)) : 0; }
+  function level(sec) {
+    if (sec <= 0) return 0;
+    var h = sec / 3600;
+    if (h < 1) return 1;
+    if (h < 2) return 2;
+    if (h < 4) return 3;
+    if (h < 6) return 4;
+    return 5;
+  }
 
-  // ---------------------------------------------------------------
-  function render(DATA) {
-    if (!DATA) {
-      running = null; liveEl.hidden = true;
-      app.innerHTML = '<div class="card"><p class="empty">Пока нет данных. Запусти виджет (<code>Таймер.vbs</code>), нажми <b>Старт</b> — и обнови эту страницу.</p></div>';
-      return;
-    }
-
+  // ---------- разбор ----------
+  function parse(DATA) {
     var sessions = arr(DATA.sessions).map(function (s) {
       var st = new Date(s.start), en = s.end ? new Date(s.end) : null;
-      return { project: s.project || '—', start: st, end: en, sec: +s.seconds || 0 };
+      return {
+        project: s.project || '—',
+        start: st, end: en,
+        sec: +s.seconds || 0,
+        note: (s.note || '').trim()
+      };
     }).filter(function (s) { return s.start && !isNaN(s.start) && s.sec > 0; });
+    sessions.sort(function (a, b) { return b.start - a.start; });
 
     running = null;
     if (DATA.current && DATA.current.start) {
       var cs = new Date(DATA.current.start);
       if (!isNaN(cs)) running = { project: DATA.current.project || '—', start: cs };
     }
+    return sessions;
+  }
+
+  // ---------- отрисовка ----------
+  function render() {
+    var DATA = state.data;
+    if (!DATA) {
+      liveEl.hidden = true;
+      app.innerHTML = '<p class="empty">Пока нет данных. Запусти виджет (<code>Таймер.vbs</code>), нажми <b>Старт</b> — и обнови страницу.</p>';
+      return;
+    }
+    var sessions = parse(DATA);
 
     var upd = DATA.updated ? new Date(DATA.updated) : null;
     updEl.textContent = upd && !isNaN(upd)
-      ? 'данные от ' + upd.toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })
+      ? upd.toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })
       : '';
 
     if (!sessions.length && !running) {
       liveEl.hidden = true;
-      app.innerHTML = '<div class="card"><p class="empty">Ещё ни одной записи. Нажми <b>Старт</b> в виджете, поработай, нажми <b>Стоп</b> — и обнови страницу.</p></div>';
+      app.innerHTML = '<p class="empty">Ещё ни одной записи. Нажми <b>Старт</b> в виджете, поработай, нажми <b>Стоп</b> — и обнови страницу.</p>';
       return;
     }
 
-    // --- агрегаты -------------------------------------------------
     var byDay = {}, byProject = {};
     sessions.forEach(function (s) {
       var k = dayKey(s.start);
@@ -260,121 +329,224 @@
 
     var now = new Date();
     var todayKey = dayKey(now);
-    var monday = new Date(now); monday.setHours(0, 0, 0, 0);
-    monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
-    var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    var extra = runSec();
 
-    function sumSince(from) {
-      return sessions.reduce(function (a, s) { return s.start >= from ? a + s.sec : a; }, 0);
-    }
-    var total    = sessions.reduce(function (a, s) { return a + s.sec; }, 0);
-    var todaySec = byDay[todayKey] || 0;
-    var weekSec  = sumSince(monday);
-    var monthSec = sumSince(monthStart);
-    var extra    = runSec();
-
-    var streak = 0;
-    var cur = new Date(now); cur.setHours(0, 0, 0, 0);
-    if (!byDay[dayKey(cur)] && !extra) cur.setDate(cur.getDate() - 1);
-    while (byDay[dayKey(cur)] || (dayKey(cur) === todayKey && extra)) {
-      streak++; cur.setDate(cur.getDate() - 1);
-    }
-    var activeDays = Object.keys(byDay).length;
-
-    // --- плитки ---------------------------------------------------
-    function tile(k, v, s) {
-      return '<div class="tile"><div class="k">' + k + '</div><div class="v">' + v + '</div>' +
-             (s ? '<div class="s">' + s + '</div>' : '') + '</div>';
-    }
-    var html = '<div class="tiles">' +
-      tile('Сегодня', hm(todaySec + extra), running ? 'таймер идёт' : '') +
-      tile('Эта неделя', hm(weekSec + extra), 'с ' + monday.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })) +
-      tile('Этот месяц', hm(monthSec + extra), monthStart.toLocaleDateString('ru-RU', { month: 'long' })) +
-      tile('Всего', hm(total + extra), activeDays + ' ' + plural(activeDays, 'день', 'дня', 'дней') + ' в работе') +
-      '</div>';
-
-    // --- по дням --------------------------------------------------
-    var DAYS = 21;
-    var days = [];
-    for (var i = DAYS - 1; i >= 0; i--) {
-      var d = new Date(now); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - i);
-      var k = dayKey(d);
-      days.push({ date: d, key: k, sec: (byDay[k] || 0) + (k === todayKey ? extra : 0) });
-    }
-    var maxSec    = Math.max.apply(null, days.map(function (d) { return d.sec; }).concat([3600]));
-    var topHours  = Math.max(1, Math.ceil(maxSec / 3600));
-    var axisMax   = topHours * 3600;
-
-    var grid = '';
-    for (var g = topHours; g >= 0; g--) {
-      var pct = 100 - (g / topHours) * 100;
-      grid += '<div style="top:' + pct.toFixed(2) + '%"><span>' + (g ? g + ' ч' : '') + '</span></div>';
-    }
-
-    var bars = '', xlabels = '';
-    var wd = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
-    days.forEach(function (d) {
-      var h = d.sec > 0 ? Math.max(3, (d.sec / axisMax) * 100) : 0;
-      var label = d.date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + ', ' + wd[d.date.getDay()];
-      bars += '<div class="bar' + (d.sec === 0 ? ' zero' : '') + '" data-tip="' +
-              esc('<b>' + hm(d.sec) + '</b><br>' + label) + '"><i style="height:' + h.toFixed(2) + '%"></i></div>';
-      var showNum = d.date.getDate() === 1 || d.date.getDay() === 1 || d.key === todayKey;
-      xlabels += '<div>' + (showNum ? d.date.getDate() : '') + '</div>';
-    });
-
-    html += '<div class="card"><h2>Последние три недели</h2>' +
-            '<div class="plot"><div class="gridlines">' + grid + '</div>' +
-            '<div class="bars">' + bars + '</div></div>' +
-            '<div class="xlabels">' + xlabels + '</div></div>';
-
-    // --- по проектам ----------------------------------------------
-    var plist = Object.keys(byProject).map(function (p) {
-      return { name: p, sec: byProject[p] + (running && running.project === p ? extra : 0) };
-    });
-    if (running && !byProject[running.project]) plist.push({ name: running.project, sec: extra });
-    plist.sort(function (a, b) { return b.sec - a.sec; });
-
-    if (plist.length > 8) {
-      var rest = plist.slice(7).reduce(function (a, p) { return a + p.sec; }, 0);
-      plist = plist.slice(0, 7).concat([{ name: 'Другое', sec: rest }]);
-    }
-    var pmax  = plist.length ? plist[0].sec : 1;
-    var grand = plist.reduce(function (a, p) { return a + p.sec; }, 0) || 1;
-
-    html += '<div class="card"><h2>По проектам</h2><div class="proj">' +
-      plist.map(function (p, i) {
-        var color = 'var(' + PAL[i % PAL.length] + ')';
-        return '<div class="prow">' +
-          '<div class="ptop"><span class="pname"><span class="swatch" style="background:' + color + '"></span>' +
-          '<b>' + esc(p.name) + '</b></span>' +
-          '<span class="pval">' + hm(p.sec) + ' · ' + Math.round((p.sec / grand) * 100) + '%</span></div>' +
-          '<div class="ptrack"><i style="width:' + ((p.sec / pmax) * 100).toFixed(2) + '%;background:' + color + '"></i></div>' +
-          '</div>';
-      }).join('') + '</div></div>';
-
-    // --- последние сессии ------------------------------------------
-    var colorOf = {};
-    plist.forEach(function (p, i) { colorOf[p.name] = 'var(' + PAL[i % PAL.length] + ')'; });
-
-    var rows = sessions.slice().sort(function (a, b) { return b.start - a.start; }).slice(0, 40)
-      .map(function (s) {
-        return '<tr><td><span class="tproj"><span class="swatch" style="background:' +
-          (colorOf[s.project] || 'var(--text-muted)') + '"></span>' + esc(s.project) + '</span></td>' +
-          '<td>' + s.start.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) + '</td>' +
-          '<td>' + clock(s.start) + (s.end ? '–' + clock(s.end) : '') + '</td>' +
-          '<td>' + hm(s.sec) + '</td></tr>';
-      }).join('');
-
-    html += '<div class="card"><details open><summary>Серия: ' + streak + ' ' +
-            plural(streak, 'день', 'дня', 'дней') + ' подряд · всего записей: ' + sessions.length + '</summary>' +
-            '<div class="tscroll"><table><thead><tr><th>Проект</th><th>Дата</th><th>Время</th><th>Длительность</th></tr></thead>' +
-            '<tbody>' + rows + '</tbody></table></div></details></div>';
+    var html = statsBlock(sessions, byDay, now, todayKey, extra) +
+               calendarBlock(byDay, now, todayKey, extra) +
+               daysBlock(byDay, now, todayKey, extra) +
+               weeksBlock(sessions, now) +
+               projectsBlock(byProject, extra) +
+               recordsBlock(sessions);
 
     app.innerHTML = html;
     paintLive();
   }
 
-  // --- живой таймер в шапке ----------------------------------------
+  // --- крупные числа ---
+  function statsBlock(sessions, byDay, now, todayKey, extra) {
+    var monday = new Date(now); monday.setHours(0, 0, 0, 0);
+    monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+    var prevMonday = new Date(monday); prevMonday.setDate(prevMonday.getDate() - 7);
+
+    function between(a, b) {
+      return sessions.reduce(function (acc, s) { return (s.start >= a && s.start < b) ? acc + s.sec : acc; }, 0);
+    }
+    var total    = sessions.reduce(function (a, s) { return a + s.sec; }, 0) + extra;
+    var todaySec = (byDay[todayKey] || 0) + extra;
+    var weekSec  = between(monday, new Date(8640000000000000)) + extra;
+    // честное сравнение: та же часть прошлой недели, что уже прошла в этой
+    var prevWeek = between(prevMonday, new Date(prevMonday.getTime() + (now - monday)));
+    var activeDays = Object.keys(byDay).length;
+    var avg = activeDays ? Math.round((total) / activeDays) : 0;
+
+    var delta = '';
+    if (prevWeek > 0) {
+      var pct = Math.round(((weekSec - prevWeek) / prevWeek) * 100);
+      delta = (pct >= 0 ? '+' : '') + pct + '% к прошлой';
+    } else if (weekSec > 0) {
+      delta = 'первая неделя';
+    }
+
+    function stat(v, k) { return '<div class="stat"><div class="v">' + v + '</div><div class="k">' + k + '</div></div>'; }
+    return '<div class="stats">' +
+      stat(hm(todaySec), running ? 'сегодня · идёт' : 'сегодня') +
+      stat(hm(weekSec), 'эта неделя' + (delta ? ' · ' + delta : '')) +
+      stat(hm(avg), 'в среднем за день') +
+      stat(hm(total), activeDays ? ('всего за ' + activeDays + ' ' + plural(activeDays, 'день', 'дня', 'дней')) : 'всего') +
+      '</div>';
+  }
+
+  // --- календарь ---
+  function calendarBlock(byDay, now, todayKey, extra) {
+    var base = new Date(now.getFullYear(), now.getMonth() + state.monthOffset, 1);
+    var y = base.getFullYear(), m = base.getMonth();
+    var first = new Date(y, m, 1), last = new Date(y, m + 1, 0);
+    var lead = (first.getDay() + 6) % 7;
+
+    var cells = '', monthSec = 0;
+    for (var i = 0; i < lead; i++) cells += '<div class="cell blank"></div>';
+    for (var d = 1; d <= last.getDate(); d++) {
+      var dt = new Date(y, m, d), k = dayKey(dt);
+      var sec = (byDay[k] || 0) + (k === todayKey ? extra : 0);
+      monthSec += sec;
+      var cls = 'cell lv' + level(sec) + (sec > 0 ? ' has' : '');
+      if (k === todayKey) cls += ' today';
+      if (k === state.selDay) cls += ' sel';
+      if (dt > now && k !== todayKey) cls += ' future';
+      var tipTxt = esc('<b>' + (sec ? hm(sec) : 'ничего') + '</b><br>' +
+        dt.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + ', ' + DOW[(dt.getDay() + 6) % 7]);
+      cells += '<div class="' + cls + '" data-day="' + k + '" data-tip="' + tipTxt + '">' + d + '</div>';
+    }
+
+    var legend = '<div class="legend"><span>меньше</span>' +
+      [0,1,2,3,4,5].map(function (l) { return '<i style="background:var(--h' + l + ')"></i>'; }).join('') +
+      '<span>больше</span></div>';
+
+    var nextDisabled = state.monthOffset >= 0 ? ' disabled style="opacity:.3;cursor:default"' : '';
+    return '<section><div class="shead">' +
+      '<h2>Календарь</h2>' +
+      '<button class="navbtn" data-nav="-1" title="Предыдущий месяц">‹</button>' +
+      '<span class="month">' + MONTHS[m] + (y !== now.getFullYear() ? ' ' + y : '') + '</span>' +
+      '<button class="navbtn" data-nav="1" title="Следующий месяц"' + nextDisabled + '>›</button>' +
+      '<span class="right">' + hm(monthSec) + ' за месяц</span></div>' +
+      '<div class="dow">' + DOW.map(function (w) { return '<div>' + w + '</div>'; }).join('') + '</div>' +
+      '<div class="cal">' + cells + '</div>' + legend + '</section>';
+  }
+
+  // --- по дням ---
+  function daysBlock(byDay, now, todayKey, extra) {
+    var DAYS = 21, days = [];
+    for (var i = DAYS - 1; i >= 0; i--) {
+      var d = new Date(now); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - i);
+      var k = dayKey(d);
+      days.push({ date: d, key: k, sec: (byDay[k] || 0) + (k === todayKey ? extra : 0) });
+    }
+    return barChart(days, 'Последние три недели', 'tall', function (d) {
+      return d.date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + ', ' + DOW[(d.date.getDay() + 6) % 7];
+    }, function (d) {
+      return (d.date.getDate() === 1 || d.date.getDay() === 1 || d.key === todayKey) ? d.date.getDate() : '';
+    });
+  }
+
+  // --- по неделям ---
+  function weeksBlock(sessions, now) {
+    var WEEKS = 12, weeks = [];
+    var monday = new Date(now); monday.setHours(0, 0, 0, 0);
+    monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+    for (var i = WEEKS - 1; i >= 0; i--) {
+      var a = new Date(monday); a.setDate(a.getDate() - i * 7);
+      var b = new Date(a); b.setDate(b.getDate() + 7);
+      var sec = sessions.reduce(function (acc, s) { return (s.start >= a && s.start < b) ? acc + s.sec : acc; }, 0);
+      if (i === 0) sec += runSec();
+      weeks.push({ date: a, end: new Date(b - 1), key: 'w' + dayKey(a), sec: sec });
+    }
+    return barChart(weeks, 'По неделям', 'short', function (w) {
+      return 'неделя с ' + w.date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+    }, function (w, i) {
+      return (i % 3 === 0 || i === 11) ? w.date.getDate() + '.' + (w.date.getMonth() + 1) : '';
+    });
+  }
+
+  function barChart(items, title, size, tipLabel, xLabel) {
+    var maxSec   = Math.max.apply(null, items.map(function (d) { return d.sec; }).concat([3600]));
+    var topUnits = Math.max(1, Math.ceil(maxSec / 3600));
+    var axisMax  = topUnits * 3600;
+    var steps    = topUnits <= 4 ? topUnits : 2;
+
+    var grid = '';
+    for (var g = steps; g >= 0; g--) {
+      var val = Math.round((g / steps) * topUnits);
+      grid += '<div style="top:' + (100 - (g / steps) * 100).toFixed(2) + '%"><span>' + (g ? val + ' ч' : '') + '</span></div>';
+    }
+    var bars = '', xl = '';
+    items.forEach(function (d, i) {
+      var h = d.sec > 0 ? Math.max(3, (d.sec / axisMax) * 100) : 0;
+      bars += '<div class="bar' + (d.sec === 0 ? ' zero' : '') + '" data-tip="' +
+              esc('<b>' + hm(d.sec) + '</b><br>' + tipLabel(d, i)) + '"><i style="height:' + h.toFixed(2) + '%"></i></div>';
+      xl += '<div>' + xLabel(d, i) + '</div>';
+    });
+    var totalSec = items.reduce(function (a, d) { return a + d.sec; }, 0);
+    return '<section><div class="shead"><h2>' + title + '</h2><span class="right">' + hm(totalSec) + '</span></div>' +
+           '<div class="plot ' + size + '"><div class="gridlines">' + grid + '</div><div class="bars">' + bars + '</div></div>' +
+           '<div class="xlabels">' + xl + '</div></section>';
+  }
+
+  // --- проекты ---
+  var colorOf = {};
+  function projectsBlock(byProject, extra) {
+    var plist = Object.keys(byProject).map(function (p) {
+      return { name: p, sec: byProject[p] + (running && running.project === p ? extra : 0) };
+    });
+    if (running && !byProject[running.project]) plist.push({ name: running.project, sec: extra });
+    plist.sort(function (a, b) { return b.sec - a.sec; });
+    if (plist.length > 8) {
+      var rest = plist.slice(7).reduce(function (a, p) { return a + p.sec; }, 0);
+      plist = plist.slice(0, 7).concat([{ name: 'Другое', sec: rest }]);
+    }
+    colorOf = {};
+    plist.forEach(function (p, i) { colorOf[p.name] = 'var(' + PAL[i % PAL.length] + ')'; });
+
+    var pmax  = plist.length ? plist[0].sec : 1;
+    var grand = plist.reduce(function (a, p) { return a + p.sec; }, 0) || 1;
+
+    return '<section><div class="shead"><h2>По проектам</h2></div>' +
+      plist.map(function (p) {
+        var c = colorOf[p.name];
+        return '<div class="prow"><div class="ptop">' +
+          '<span class="pname"><span class="swatch" style="background:' + c + '"></span><span class="nm">' + esc(p.name) + '</span></span>' +
+          '<span class="pval">' + hm(p.sec) + ' · ' + Math.round((p.sec / grand) * 100) + '%</span></div>' +
+          '<div class="ptrack"><i style="width:' + ((p.sec / pmax) * 100).toFixed(2) + '%;background:' + c + '"></i></div></div>';
+      }).join('') + '</section>';
+  }
+
+  // --- записи ---
+  function recordsBlock(sessions) {
+    var list = sessions;
+    var filterLine = '';
+    if (state.selDay) {
+      list = sessions.filter(function (s) { return dayKey(s.start) === state.selDay; });
+      var dt = new Date(state.selDay + 'T00:00:00');
+      filterLine = '<div class="filterbar">показан один день: ' +
+        dt.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) +
+        '<button data-clear="1">показать все</button></div>';
+    }
+
+    var groups = [], seen = {};
+    list.forEach(function (s) {
+      var k = dayKey(s.start);
+      if (!seen[k]) { seen[k] = { key: k, date: s.start, items: [], sec: 0 }; groups.push(seen[k]); }
+      seen[k].items.push(s);
+      seen[k].sec += s.sec;
+    });
+
+    var LIMIT = 7;
+    var shown = (state.expanded || state.selDay) ? groups : groups.slice(0, LIMIT);
+    var hidden = groups.length - shown.length;
+
+    var body = shown.map(function (g) {
+      var head = '<div class="dayhead"><b>' +
+        g.date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + '</b>' +
+        '<span>' + DOW[(g.date.getDay() + 6) % 7] + ' · ' + hm(g.sec) + '</span></div>';
+      var rows = g.items.slice().sort(function (a, b) { return a.start - b.start; }).map(function (s) {
+        return '<div class="rec">' +
+          '<div class="tm">' + clock(s.start) + (s.end ? '–' + clock(s.end) : '') + '</div>' +
+          '<div class="mid"><div class="pj"><span class="swatch" style="background:' +
+            (colorOf[s.project] || 'var(--text-muted)') + '"></span>' + esc(s.project) + '</div>' +
+          (s.note ? '<div class="note">' + esc(s.note) + '</div>' : '') + '</div>' +
+          '<div class="du">' + hm(s.sec) + '</div></div>';
+      }).join('');
+      return '<div class="daygroup">' + head + rows + '</div>';
+    }).join('');
+
+    if (!body) body = '<p class="empty">В этот день записей нет.</p>';
+    var moreBtn = hidden > 0 ? '<button class="more" data-more="1">Показать ещё ' + hidden + ' ' + plural(hidden, 'день', 'дня', 'дней') + ' →</button>' : '';
+
+    return '<section><div class="shead"><h2>Записи</h2><span class="right">' + sessions.length + ' ' +
+      plural(sessions.length, 'сессия', 'сессии', 'сессий') + '</span></div>' +
+      filterLine + body + moreBtn + '</section>';
+  }
+
+  // ---------- живой таймер ----------
   function paintLive() {
     if (!running) { liveEl.hidden = true; return; }
     liveEl.hidden = false;
@@ -382,7 +554,25 @@
   }
   setInterval(paintLive, 1000);
 
-  // --- подсказки ----------------------------------------------------
+  // ---------- события ----------
+  app.addEventListener('click', function (e) {
+    var nav = e.target.closest('[data-nav]');
+    if (nav && !nav.disabled) {
+      state.monthOffset = Math.min(0, state.monthOffset + (+nav.getAttribute('data-nav')));
+      render(); return;
+    }
+    var cell = e.target.closest('.cell.has');
+    if (cell) {
+      var k = cell.getAttribute('data-day');
+      state.selDay = (state.selDay === k) ? null : k;
+      render();
+      if (state.selDay) document.getElementById('app').querySelector('section:last-child').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    if (e.target.closest('[data-clear]')) { state.selDay = null; render(); return; }
+    if (e.target.closest('[data-more]')) { state.expanded = true; render(); return; }
+  });
+
   app.addEventListener('mouseover', function (e) {
     var el = e.target.closest('[data-tip]');
     if (!el) return;
@@ -396,14 +586,13 @@
     if (e.target.closest('[data-tip]')) tip.style.opacity = '0';
   });
 
-  // --- загрузка данных ----------------------------------------------
-  // На сайте — свежий data.json по сети; локально (file://) — data.js рядом.
+  // ---------- загрузка ----------
   function load() {
-    if (!ONLINE) { render(window.TT_DATA || null); return; }
+    if (!ONLINE) { state.data = window.TT_DATA || null; render(); return; }
     fetch('data.json?t=' + Date.now(), { cache: 'no-store' })
       .then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (d) { render(d || window.TT_DATA || null); })
-      .catch(function () { render(window.TT_DATA || null); });
+      .then(function (d) { state.data = d || window.TT_DATA || null; render(); })
+      .catch(function () { state.data = window.TT_DATA || null; render(); });
   }
 
   load();
