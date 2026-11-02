@@ -1,11 +1,9 @@
 window.TT_DATA = {
-    "projects":  [
-                     "Мой проект"
-                 ],
-    "sessions":  [
-
-                 ],
-    "current":  null,
-    "window":  null,
-    "updated":  "2026-11-02T18:49:40.2139477+01:00"
+    "projects": [
+        "Мой проект"
+    ],
+    "sessions": [],
+    "current": null,
+    "window": null,
+    "updated": "2026-11-02T18:08:23.264Z"
 };
