@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111110">
+<title>Время по проектам</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface-0:      #f4f4f2;
+    --surface-1:      #fcfcfb;
+    --border:         #e3e2de;
+    --text-primary:   #0b0b0b;
+    --text-secondary: #52514e;
+    --text-muted:     #8a8980;
+    --grid:           #ebeae6;
+    --series-1:       #2a78d6;
+    --c1: #2a78d6; --c2: #eb6834; --c3: #1baf7a; --c4: #eda100;
+    --c5: #e87ba4; --c6: #008300; --c7: #6250d6; --c8: #e34948;
+    --good:           #0ca30c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface-0:      #111110;
+      --surface-1:      #1a1a19;
+      --border:         #2f2f2c;
+      --text-primary:   #f0efec;
+      --text-secondary: #c3c2b7;
+      --text-muted:     #8d8c84;
+      --grid:           #2a2a27;
+      --series-1:       #3987e5;
+      --c1: #3987e5; --c2: #d95926; --c3: #199e70; --c4: #c98500;
+      --c5: #d55181; --c6: #008300; --c7: #9085e9; --c8: #e66767;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-0:      #111110;
+    --surface-1:      #1a1a19;
+    --border:         #2f2f2c;
+    --text-primary:   #f0efec;
+    --text-secondary: #c3c2b7;
+    --text-muted:     #8d8c84;
+    --grid:           #2a2a27;
+    --series-1:       #3987e5;
+    --c1: #3987e5; --c2: #d95926; --c3: #199e70; --c4: #c98500;
+    --c5: #d55181; --c6: #008300; --c7: #9085e9; --c8: #e66767;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--surface-0);
+    color: var(--text-primary);
+    font: 15px/1.5 -apple-system, "Segoe UI", Roboto, Inter, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 32px 16px 64px; }
+
+  header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin-bottom: 24px; }
+  h1 { font-size: 22px; font-weight: 650; letter-spacing: -0.01em; margin: 0; }
+  .meta { font-size: 13px; color: var(--text-muted); }
+  .live {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--good); font-variant-numeric: tabular-nums;
+  }
+  .live .dot {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--good);
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
+
+  .card {
+    background: var(--surface-1);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card h2 {
+    font-size: 13px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .06em; color: var(--text-secondary);
+    margin: 0 0 18px;
+  }
+
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
+  @media (max-width: 620px) { .tiles { grid-template-columns: repeat(2, 1fr); } }
+  .tile {
+    background: var(--surface-1); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px 18px;
+  }
+  .tile .k { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+  .tile .v {
+    font-size: 26px; font-weight: 600; letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .tile .s { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+  /* --- столбцы по дням --- */
+  .plot { position: relative; height: 180px; padding-left: 34px; }
+  .gridlines { position: absolute; inset: 0 0 0 34px; pointer-events: none; }
+  .gridlines div {
+    position: absolute; left: 0; right: 0; border-top: 1px solid var(--grid);
+    font-size: 11px; color: var(--text-muted);
+  }
+  .gridlines div span { position: absolute; right: 100%; top: -8px; padding-right: 8px; white-space: nowrap; }
+  .bars { position: absolute; inset: 0 0 0 34px; display: flex; align-items: flex-end; gap: 2px; }
+  .bar { flex: 1; position: relative; height: 100%; display: flex; align-items: flex-end; cursor: default; }
+  .bar i {
+    display: block; width: 100%; background: var(--series-1);
+    border-radius: 4px 4px 0 0; min-height: 0;
+    transition: opacity .12s;
+  }
+  .bar.zero i { background: var(--grid); border-radius: 2px; height: 2px !important; }
+  .bar:hover i { opacity: .72; }
+  .xlabels { display: flex; gap: 2px; margin-top: 8px; padding-left: 34px; }
+  .xlabels div {
+    flex: 1; text-align: center; font-size: 10px; color: var(--text-muted);
+    white-space: nowrap; overflow: hidden;
+  }
+
+  /* --- проекты --- */
+  .proj { display: flex; flex-direction: column; gap: 12px; }
+  .prow { display: grid; grid-template-columns: 1fr; gap: 5px; }
+  .ptop { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 14px; }
+  .pname { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .pname b { font-weight: 550; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .swatch { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+  .pval { color: var(--text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .ptrack { height: 8px; background: var(--grid); border-radius: 4px; overflow: hidden; }
+  .ptrack i { display: block; height: 100%; border-radius: 4px; }
+
+  /* --- таблица --- */
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--border); }
+  th { font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; }
+  td:last-child, th:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: 0; }
+  .tproj { display: inline-flex; align-items: center; gap: 8px; }
+  .tscroll { overflow-x: auto; }
+
+  /* --- подсказка --- */
+  #tip {
+    position: fixed; z-index: 10; pointer-events: none; opacity: 0;
+    transition: opacity .1s;
+    background: var(--text-primary); color: var(--surface-1);
+    font-size: 12px; line-height: 1.4; padding: 7px 10px; border-radius: 8px;
+    white-space: nowrap; box-shadow: 0 4px 16px rgba(0,0,0,.18);
+  }
+  #tip b { font-weight: 600; }
+
+  .empty { color: var(--text-secondary); font-size: 14px; }
+  .empty code {
+    background: var(--surface-0); border: 1px solid var(--border);
+    padding: 2px 6px; border-radius: 5px; font-size: 13px;
+  }
+  details summary {
+    cursor: pointer; font-size: 13px; color: var(--text-secondary);
+    margin-bottom: 12px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Время по проектам</h1>
+    <span class="meta" id="updated"></span>
+    <span class="live" id="live" hidden><span class="dot"></span><span id="liveText"></span></span>
+  </header>
+  <div id="app"></div>
+</div>
+<div id="tip"></div>
+
+<!-- локальный режим: файл рядом. На сайте данные берутся через fetch. -->
+<script src="data.js" onerror="window.__ttNoLocal = true"></script>
+<script>
+(function () {
+  var PAL = ['--c1','--c2','--c3','--c4','--c5','--c6','--c7','--c8'];
+  var app     = document.getElementById('app');
+  var tip     = document.getElementById('tip');
+  var liveEl  = document.getElementById('live');
+  var liveTxt = document.getElementById('liveText');
+  var updEl   = document.getElementById('updated');
+  var ONLINE  = location.protocol === 'http:' || location.protocol === 'https:';
+
+  var running = null;   // идущая сессия, обновляется при каждом рендере
+
+  function arr(x) { return Array.isArray(x) ? x : (x ? [x] : []); }
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  function dayKey(d) {
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function plural(n, a, b, c) {
+    var m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return a;
+    if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return b;
+    return c;
+  }
+  function hm(sec) {
+    var h = Math.floor(sec / 3600), m = Math.round((sec % 3600) / 60);
+    if (m === 60) { h += 1; m = 0; }
+    if (h && m) return h + ' ч ' + m + ' м';
+    if (h) return h + ' ч';
+    if (m) return m + ' м';
+    return '—';
+  }
+  function hms(sec) {
+    var h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = Math.floor(sec % 60);
+    return [h, m, s].map(function (n) { return String(n).padStart(2, '0'); }).join(':');
+  }
+  function clock(d) {
+    return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  }
+  function runSec() { return running ? Math.max(0, Math.floor((Date.now() - running.start) / 1000)) : 0; }
+
+  // ---------------------------------------------------------------
+  function render(DATA) {
+    if (!DATA) {
+      running = null; liveEl.hidden = true;
+      app.innerHTML = '<div class="card"><p class="empty">Пока нет данных. Запусти виджет (<code>Таймер.vbs</code>), нажми <b>Старт</b> — и обнови эту страницу.</p></div>';
+      return;
+    }
+
+    var sessions = arr(DATA.sessions).map(function (s) {
+      var st = new Date(s.start), en = s.end ? new Date(s.end) : null;
+      return { project: s.project || '—', start: st, end: en, sec: +s.seconds || 0 };
+    }).filter(function (s) { return s.start && !isNaN(s.start) && s.sec > 0; });
+
+    running = null;
+    if (DATA.current && DATA.current.start) {
+      var cs = new Date(DATA.current.start);
+      if (!isNaN(cs)) running = { project: DATA.current.project || '—', start: cs };
+    }
+
+    var upd = DATA.updated ? new Date(DATA.updated) : null;
+    updEl.textContent = upd && !isNaN(upd)
+      ? 'данные от ' + upd.toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })
+      : '';
+
+    if (!sessions.length && !running) {
+      liveEl.hidden = true;
+      app.innerHTML = '<div class="card"><p class="empty">Ещё ни одной записи. Нажми <b>Старт</b> в виджете, поработай, нажми <b>Стоп</b> — и обнови страницу.</p></div>';
+      return;
+    }
+
+    // --- агрегаты -------------------------------------------------
+    var byDay = {}, byProject = {};
+    sessions.forEach(function (s) {
+      var k = dayKey(s.start);
+      byDay[k] = (byDay[k] || 0) + s.sec;
+      byProject[s.project] = (byProject[s.project] || 0) + s.sec;
+    });
+
+    var now = new Date();
+    var todayKey = dayKey(now);
+    var monday = new Date(now); monday.setHours(0, 0, 0, 0);
+    monday.setDate(monday.getDate() - ((monday.getDay() + 6) % 7));
+    var monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    function sumSince(from) {
+      return sessions.reduce(function (a, s) { return s.start >= from ? a + s.sec : a; }, 0);
+    }
+    var total    = sessions.reduce(function (a, s) { return a + s.sec; }, 0);
+    var todaySec = byDay[todayKey] || 0;
+    var weekSec  = sumSince(monday);
+    var monthSec = sumSince(monthStart);
+    var extra    = runSec();
+
+    var streak = 0;
+    var cur = new Date(now); cur.setHours(0, 0, 0, 0);
+    if (!byDay[dayKey(cur)] && !extra) cur.setDate(cur.getDate() - 1);
+    while (byDay[dayKey(cur)] || (dayKey(cur) === todayKey && extra)) {
+      streak++; cur.setDate(cur.getDate() - 1);
+    }
+    var activeDays = Object.keys(byDay).length;
+
+    // --- плитки ---------------------------------------------------
+    function tile(k, v, s) {
+      return '<div class="tile"><div class="k">' + k + '</div><div class="v">' + v + '</div>' +
+             (s ? '<div class="s">' + s + '</div>' : '') + '</div>';
+    }
+    var html = '<div class="tiles">' +
+      tile('Сегодня', hm(todaySec + extra), running ? 'таймер идёт' : '') +
+      tile('Эта неделя', hm(weekSec + extra), 'с ' + monday.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })) +
+      tile('Этот месяц', hm(monthSec + extra), monthStart.toLocaleDateString('ru-RU', { month: 'long' })) +
+      tile('Всего', hm(total + extra), activeDays + ' ' + plural(activeDays, 'день', 'дня', 'дней') + ' в работе') +
+      '</div>';
+
+    // --- по дням --------------------------------------------------
+    var DAYS = 21;
+    var days = [];
+    for (var i = DAYS - 1; i >= 0; i--) {
+      var d = new Date(now); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - i);
+      var k = dayKey(d);
+      days.push({ date: d, key: k, sec: (byDay[k] || 0) + (k === todayKey ? extra : 0) });
+    }
+    var maxSec    = Math.max.apply(null, days.map(function (d) { return d.sec; }).concat([3600]));
+    var topHours  = Math.max(1, Math.ceil(maxSec / 3600));
+    var axisMax   = topHours * 3600;
+
+    var grid = '';
+    for (var g = topHours; g >= 0; g--) {
+      var pct = 100 - (g / topHours) * 100;
+      grid += '<div style="top:' + pct.toFixed(2) + '%"><span>' + (g ? g + ' ч' : '') + '</span></div>';
+    }
+
+    var bars = '', xlabels = '';
+    var wd = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+    days.forEach(function (d) {
+      var h = d.sec > 0 ? Math.max(3, (d.sec / axisMax) * 100) : 0;
+      var label = d.date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + ', ' + wd[d.date.getDay()];
+      bars += '<div class="bar' + (d.sec === 0 ? ' zero' : '') + '" data-tip="' +
+              esc('<b>' + hm(d.sec) + '</b><br>' + label) + '"><i style="height:' + h.toFixed(2) + '%"></i></div>';
+      var showNum = d.date.getDate() === 1 || d.date.getDay() === 1 || d.key === todayKey;
+      xlabels += '<div>' + (showNum ? d.date.getDate() : '') + '</div>';
+    });
+
+    html += '<div class="card"><h2>Последние три недели</h2>' +
+            '<div class="plot"><div class="gridlines">' + grid + '</div>' +
+            '<div class="bars">' + bars + '</div></div>' +
+            '<div class="xlabels">' + xlabels + '</div></div>';
+
+    // --- по проектам ----------------------------------------------
+    var plist = Object.keys(byProject).map(function (p) {
+      return { name: p, sec: byProject[p] + (running && running.project === p ? extra : 0) };
+    });
+    if (running && !byProject[running.project]) plist.push({ name: running.project, sec: extra });
+    plist.sort(function (a, b) { return b.sec - a.sec; });
+
+    if (plist.length > 8) {
+      var rest = plist.slice(7).reduce(function (a, p) { return a + p.sec; }, 0);
+      plist = plist.slice(0, 7).concat([{ name: 'Другое', sec: rest }]);
+    }
+    var pmax  = plist.length ? plist[0].sec : 1;
+    var grand = plist.reduce(function (a, p) { return a + p.sec; }, 0) || 1;
+
+    html += '<div class="card"><h2>По проектам</h2><div class="proj">' +
+      plist.map(function (p, i) {
+        var color = 'var(' + PAL[i % PAL.length] + ')';
+        return '<div class="prow">' +
+          '<div class="ptop"><span class="pname"><span class="swatch" style="background:' + color + '"></span>' +
+          '<b>' + esc(p.name) + '</b></span>' +
+          '<span class="pval">' + hm(p.sec) + ' · ' + Math.round((p.sec / grand) * 100) + '%</span></div>' +
+          '<div class="ptrack"><i style="width:' + ((p.sec / pmax) * 100).toFixed(2) + '%;background:' + color + '"></i></div>' +
+          '</div>';
+      }).join('') + '</div></div>';
+
+    // --- последние сессии ------------------------------------------
+    var colorOf = {};
+    plist.forEach(function (p, i) { colorOf[p.name] = 'var(' + PAL[i % PAL.length] + ')'; });
+
+    var rows = sessions.slice().sort(function (a, b) { return b.start - a.start; }).slice(0, 40)
+      .map(function (s) {
+        return '<tr><td><span class="tproj"><span class="swatch" style="background:' +
+          (colorOf[s.project] || 'var(--text-muted)') + '"></span>' + esc(s.project) + '</span></td>' +
+          '<td>' + s.start.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }) + '</td>' +
+          '<td>' + clock(s.start) + (s.end ? '–' + clock(s.end) : '') + '</td>' +
+          '<td>' + hm(s.sec) + '</td></tr>';
+      }).join('');
+
+    html += '<div class="card"><details open><summary>Серия: ' + streak + ' ' +
+            plural(streak, 'день', 'дня', 'дней') + ' подряд · всего записей: ' + sessions.length + '</summary>' +
+            '<div class="tscroll"><table><thead><tr><th>Проект</th><th>Дата</th><th>Время</th><th>Длительность</th></tr></thead>' +
+            '<tbody>' + rows + '</tbody></table></div></details></div>';
+
+    app.innerHTML = html;
+    paintLive();
+  }
+
+  // --- живой таймер в шапке ----------------------------------------
+  function paintLive() {
+    if (!running) { liveEl.hidden = true; return; }
+    liveEl.hidden = false;
+    liveTxt.textContent = running.project + ' · ' + hms(runSec());
+  }
+  setInterval(paintLive, 1000);
+
+  // --- подсказки ----------------------------------------------------
+  app.addEventListener('mouseover', function (e) {
+    var el = e.target.closest('[data-tip]');
+    if (!el) return;
+    tip.innerHTML = el.getAttribute('data-tip');
+    tip.style.opacity = '1';
+    var r = el.getBoundingClientRect(), t = tip.getBoundingClientRect();
+    tip.style.left = Math.min(window.innerWidth - t.width - 8, Math.max(8, r.left + r.width / 2 - t.width / 2)) + 'px';
+    tip.style.top  = Math.max(8, r.top - t.height - 8) + 'px';
+  });
+  app.addEventListener('mouseout', function (e) {
+    if (e.target.closest('[data-tip]')) tip.style.opacity = '0';
+  });
+
+  // --- загрузка данных ----------------------------------------------
+  // На сайте — свежий data.json по сети; локально (file://) — data.js рядом.
+  function load() {
+    if (!ONLINE) { render(window.TT_DATA || null); return; }
+    fetch('data.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { render(d || window.TT_DATA || null); })
+      .catch(function () { render(window.TT_DATA || null); });
+  }
+
+  load();
+  if (ONLINE) {
+    setInterval(function () { if (!document.hidden) load(); }, 60000);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) load(); });
+  }
+})();
+</script>
+</body>
+</html>
